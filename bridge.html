@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading Site Preferences...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Basic styling for the bridge page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            text-align: center;
+            background-color: #f0f0f0; /* Light gray background */
+        }
+        #prompt-container {
+            display: none; /* Hidden by default, shown when preference is needed */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:nth-child(2) { /* New Homepage button */
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+        button:nth-child(3) { /* Old Homepage button */
+            background-color: #008CBA; /* Blue */
+            color: white;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-message">
+        Checking your preferences and redirecting...
+    </div>
+
+    <div id="prompt-container">
+        <h1>Welcome! Which site version do you prefer?</h1>
+        <p>We'll remember your choice for next time.</p>
+        <button onclick="setPreferenceAndRedirect('new')">Go to New Homepage</button>
+        <button onclick="setPreferenceAndRedirect('old')">Go to Old Homepage</button>
+    </div>
+
+    <script>
+        // --- CONFIGURATION: REPLACE THESE URLs ---
+        const NEW_HOME_URL = 'https://sites.google.com/kaneland.org/142/kaneland-application-launcher?authuser=1'; // <-- REPLACE THIS WITH YOUR NEW HOME URL
+        const OLD_HOME_URL = 'https://sites.google.com/kaneland.org/kanelandapplicationlauncher/?authuser=1'; // <-- REPLACE THIS WITH YOUR OLD HOME URL
+        // -----------------------------------------
+        
+        const PREF_KEY = 'site_homepage_preference';
+
+        function setPreferenceAndRedirect(preference) {
+            // 1. Save the preference to local storage
+            localStorage.setItem(PREF_KEY, preference);
+
+            // 2. Determine the correct URL
+            const targetUrl = (preference === 'new') ? NEW_HOME_URL : OLD_HOME_URL;
+
+            // 3. Redirect the main browser window (this is the key step)
+            window.top.location.replace(targetUrl);
+        }
+
+        function checkPreference() {
+            const preference = localStorage.getItem(PREF_KEY);
+
+            if (preference) {
+                // Preference exists, redirect immediately
+                document.getElementById('loading-message').textContent = `Redirecting to the ${preference} homepage...`;
+                setPreferenceAndRedirect(preference);
+            } else {
+                // No preference, show the prompt to the user
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('prompt-container').style.display = 'flex'; // Use flex to center buttons
+            }
+        }
+
+        // Run the preference check logic as soon as the script loads
+        checkPreference();
+    </script>
+</body>
+</html>
